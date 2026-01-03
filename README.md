@@ -1,289 +1,170 @@
-Project Overview
 
-This project is an AI-powered wildlife monitoring system designed to detect, track, and accurately count animals near forest boundaries, villages, and wildlife corridors.
+---
 
-The system is built to solve a real-world problem:
-👉 The same animal is often detected multiple times, leading to false counts and unnecessary alerts.
+## 🧩 Technology Stack
 
-Our solution introduces Global Animal Identity, re-entry detection, and rule-based decision logic to ensure:
+WinGaurd is built using **practical, industry-standard technologies** suitable for both hackathons and real-world deployment.
 
-One animal is counted only once
+![Technology Stack](https://github.com/VaibhavPo/WinGaurd/blob/609dfe9b09bf5b14a5a576d450aa4ce3934cfa7c/flow%20(1).png)
 
-Alerts are generated only when truly required
+### Core Layers
 
-The system is deployable on real hardware at the edge
+- **Edge Hardware & Sensors**
+- **AI / Computer Vision**
+- **Tracking & Identity Intelligence**
+- **Backend APIs**
+- **Data Storage & Analytics**
+- **Alert & Notification System**
 
-Problem We Are Solving
+---
 
-Traditional camera-based monitoring systems suffer from:
+## 🔌 Hardware Setup (Edge Layer)
 
-Duplicate animal counting
+WinGaurd uses real hardware for **motion-based triggering and image capture**, ensuring power efficiency and reliability.
 
-Repeated alerts for the same animal
+### Hardware Components Used
 
-No understanding of animal movement or re-entry
+- **ESP32 Microcontroller**
+- **PIR Motion Sensor** (Motion Detection)
+- **ESP32 Camera Module** (Image Capture)
+- Power Supply (Battery / Adapter)
 
-High false alarm rate near villages
+---
 
-Example:
-An elephant crosses a boundary multiple times in one evening.
-❌ Traditional system → Count = 4
-✅ Our system → Count = 1
+### 🔧 Hardware Circuit Diagram
 
-Our Solution (In Simple Terms)
+The complete hardware circuit used in this project is shown below:
 
-We built a system that:
+![Hardware Circuit Diagram](https://github.com/VaibhavPo/WinGaurd/blob/195bfe278cba1f5061b4b2d6a24ba41a8dc08a87/circuit_image%20(3).png)
 
-Detects motion using hardware sensors
+---
 
-Captures images only when needed (power efficient)
+### ⚙️ Hardware Working
 
-Uses AI to detect human vs animal
+1. PIR sensor detects motion  
+2. ESP32 wakes up from low-power state  
+3. ESP32 camera captures the image  
+4. Image is sent to the AI pipeline  
+5. System returns to low-power mode  
 
-Assigns a Global ID to each animal
+This design ensures:
+- Minimal power consumption  
+- No unnecessary image capture  
+- Efficient edge processing  
 
-Prevents duplicate counting
+---
 
-Uses rules (not AI guessing) to trigger alerts
+## 🧠 AI & Software Workflow
 
-System Architecture (High-Level Flow)
-Motion Detection
-      ↓
-Image Capture
-      ↓
-AI Processing
-      ↓
-Tracking & Global ID
-      ↓
-De-Duplication
-      ↓
-Counting
-      ↓
-Rule-Based Decision
-      ↓
-Alert / Log
-      ↓
-Database & Dashboard
+### 1. Motion Trigger
+- Activated by PIR sensor  
+- Prevents continuous camera operation  
 
-Hardware Setup (Edge Device)
-Components Used
+### 2. Image Capture
+- RGB image captured by ESP32 camera  
+- Timestamp and camera ID attached  
 
-ESP32 Microcontroller
+### 3. Image Preprocessing
+- Image resized and cleaned  
+- Prepared for stable AI inference  
 
-PIR Motion Sensor (for motion detection)
+### 4. Object Detection (Human vs Animal)
+- AI model detects **human or animal**
+- Low-confidence detections are ignored  
 
-ESP32 Camera Module (for image capture)
+- **Human detected** → Event logged  
+- **Animal detected** → Proceed to next step  
 
-Power Supply (Battery / Adapter)
+### 5. Species Classification (Animal Only)
+- Identifies species (e.g., Elephant, Deer)  
+- Low confidence → marked as *Unknown*  
 
-The hardware works as the edge trigger system, ensuring:
+### 6. Single-Camera Tracking
+- Assigns a **Local Track ID**
+- Prevents duplicate counting within the same camera  
+- 🚫 No counting happens at this stage  
 
-Camera activates only when motion is detected
+### 7. Cross-Camera Association (Global ID)
+- Assigns a **Global Animal ID**
+- Matching based on:
+  - Species
+  - Time gap
+  - Direction
+  - Camera sequence  
 
-Power consumption is minimized
+### 8. Re-Entry & De-Duplication Logic
+This is the **core innovation** of WinGaurd.
 
-Data sent to AI pipeline only when required
+An animal is **not counted again** if:
+- Same Global ID  
+- Reappears within a short time window  
+- Same boundary or corridor  
 
-🔌 Hardware Circuit Diagram
+Counted again **only if**:
+- Long absence (e.g., next day)
+- New migration cycle  
 
-📷 Hardware Circuit Image Placeholder
-(ESP32 + PIR Sensor + ESP32 Camera Module)
+### 9. Counting Engine
+- Counts **only new Global IDs**
+- Supports:
+  - Unique animal count  
+  - Species-wise count  
+  - Movement direction analysis  
 
-⬇️ Insert your circuit diagram image here
+### 10. Zone-Based Decision Engine
+Alerts are generated using **rules**, not AI guesses.
 
-[ IMAGE PLACEHOLDER – HARDWARE CIRCUIT DIAGRAM ]
+- Large animal + boundary + herd → **High Alert**
+- Corridor movement → **Log Only**
 
-⚙️ Hardware Working Flow
+### 11. Alert System
+- Dashboard alerts  
+- Notifications / SMS (optional)  
+- Only **Medium & High risk** events trigger alerts  
 
-PIR sensor detects motion
+### 12. Data Storage & Analytics
+Stored data includes:
+- Global Animal ID  
+- Species  
+- First seen / Last seen  
+- Camera path  
+- Count status  
 
-ESP32 wakes up the camera
+Used for analytics, reporting, and system improvement.
 
-Image is captured
+---
 
-Image is sent to AI processing pipeline
+## 🌟 Key Advantages
 
-ESP32 returns to low-power state
+- ✅ No duplicate animal counting  
+- ✅ Hardware + AI integrated solution  
+- ✅ Power-efficient edge design  
+- ✅ Rule-based, explainable alerts  
+- ✅ Real-world deployable architecture  
 
-AI & Software Workflow
-1. Motion Trigger
+---
 
-Triggered by PIR sensor
+## 🎯 Use Cases
 
-Prevents continuous camera usage
+- Forest boundary monitoring  
+- Village safety systems  
+- Wildlife corridor analysis  
+- Human–animal conflict prevention  
 
-2. Image Capture
+---
 
-RGB image captured by ESP32 camera
+## 🏁 Conclusion
 
-Timestamp and camera ID attached
+WinGaurd is not just an AI model — it is a **complete intelligent wildlife monitoring system** combining:
 
-📷 Image Capture Example Placeholder
+- Edge hardware  
+- Computer vision  
+- Tracking intelligence  
+- Biological logic  
+- Rule-based decision making  
 
-[ IMAGE PLACEHOLDER – CAMERA CAPTURE ]
+It delivers **accurate counting, meaningful alerts, and real-world reliability**.
 
-3. Image Preprocessing
+---
 
-Image resized and cleaned
-
-Prepared for AI inference
-
-4. Object Detection (Human vs Animal)
-
-AI model detects:
-
-Human
-
-Animal
-
-Low-confidence detections are ignored
-
-If human detected → event logged
-If animal detected → move to next step
-
-5. Species Classification (Animal Only)
-
-Classifies animal (e.g., Elephant, Deer)
-
-Low-confidence → marked as Unknown
-
-This step is important for:
-
-Species-wise counting
-
-Risk assessment
-
-6. Single-Camera Tracking
-
-Tracks animal within the same camera
-
-Assigns Local Track ID
-
-Prevents double counting within one camera view
-
-🚫 No counting happens here
-
-7. Cross-Camera Association (Global ID)
-
-Assigns a Global Animal ID
-
-Matches animals using:
-
-Species
-
-Time gap
-
-Movement direction
-
-Camera sequence
-
-This allows tracking the same animal across multiple cameras.
-
-8. Re-Entry & De-Duplication Logic
-
-This is the core feature of the system.
-
-An animal is NOT counted again if:
-
-Same Global ID
-
-Appears again within a short time window
-
-Same boundary or corridor
-
-✅ Count again only if:
-
-Long absence (e.g., next day)
-
-New migration cycle
-
-9. Counting Engine
-
-Counts only new Global IDs
-
-Supports:
-
-Unique animal count
-
-Species-wise count
-
-Directional movement
-
-10. Zone-Based Decision Engine
-
-Alerts are generated using rules, not AI guesses.
-
-Examples:
-
-Large animal + boundary + group → High Alert
-
-Animal in corridor → Log only
-
-This avoids false alarms and panic.
-
-11. Alert System
-
-Alerts are sent via:
-
-Dashboard
-
-Notifications / SMS (if enabled)
-
-Only Medium and High risk events trigger alerts.
-
-12. Data Storage & Analytics
-
-All final data is stored for future use.
-
-Stored Information Includes:
-
-Global Animal ID
-
-Species
-
-First seen / Last seen
-
-Camera path
-
-Count status
-
-📊 Used for:
-
-Daily reports
-
-Wildlife movement analysis
-
-System evaluation
-
-Why This System Is Different
-
-✅ No duplicate animal counting
-✅ Hardware + AI integrated solution
-✅ Power-efficient edge design
-✅ Rule-based, explainable decisions
-✅ Ready for real-world deployment
-
-Use Cases
-
-Forest boundary monitoring
-
-Village safety systems
-
-Wildlife corridor analysis
-
-Human–animal conflict prevention
-
-Conclusion
-
-This project is not just an AI model —
-it is a complete intelligent monitoring system combining:
-
-Hardware sensing
-
-AI vision
-
-Biological logic
-
-Rule-based decisions
-
-It provides accurate counting, meaningful alerts, and real-world reliability.
+🔥 **Hackathon Ready. Field Ready. Future Ready.**
