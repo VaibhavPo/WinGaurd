@@ -47,25 +47,49 @@ WinGuard is built to generate reliable, auditable events:
 
 ## 🧩 Problem Statement
 
-Human–Wildlife Conflict (HWC) is rising across corridors, farms, and forest boundaries, but most current monitoring setups still fail at the exact point where people need them: **making a reliable, real-time decision from noisy signals**.
+In many villages that sit close to forests and wildlife corridors — for example along border regions near Uttarakhand — life after sunset can feel like a daily gamble.
+
+Farms, footpaths, and small roads often lie right beside forest edges. People step out to check crops, fetch water, or walk home from work. At the same time, animals move through the same landscape: elephants crossing corridors, bears roaming for food, and other wildlife appearing unexpectedly near human settlements.
+
+When an animal enters the village boundary, the outcome depends on one thing: **how fast and how correctly people can understand what is happening**.
+
+### The ground reality (a story you can picture)
+
+It’s late evening. A sensor triggers. A camera frame is captured.
+
+The village needs answers in seconds:
+
+- Is it a person or an animal?
+- If it’s an animal, which one?
+- Is it moving toward homes, toward fields, or away from the settlement?
+- Is this a single animal or a group?
+
+But most systems only produce a *signal* (motion detected) — not a decision. So people rely on guesswork, phone calls, and manual checking. Sometimes that delay costs crops and property. Sometimes it risks human safety.
 
 ### What people are facing today
 
-- **Too many false alarms:** Motion/PIR-triggered systems and basic CCTV analytics alert on wind, shadows, pets, or passing vehicles.
-- **Low-confidence identification:** Even when something is detected, many systems can’t reliably answer *human vs animal* and *which species*.
-- **Slow response loops:** By the time a human verifies the feed, the animal is gone — or damage is already done.
-- **No audit trail:** Events often aren’t stored with consistent metadata, making it hard to analyze patterns, justify interventions, or improve models.
-- **Edge constraints:** Remote deployments have limited power/connectivity, so always-on streaming is impractical.
+- **Alerts without clarity:** Motion/PIR systems trigger frequently, but they don’t tell *what* triggered them.
+- **False alarms → alarm fatigue:** When many alerts are wrong, people stop trusting the alerts.
+- **No consistent proof:** Without an image + metadata log, it’s hard to review incidents, coordinate response teams, or justify preventive actions.
+- **Slow verification:** Someone must open a feed, watch, and decide — which is slow and not always possible at night.
+- **Edge limitations:** Villages often have unstable power and limited connectivity, so 24/7 cloud streaming is expensive and unreliable.
 
-### Why this is hard
+### Why this is a hard problem (and why AI alone isn’t enough)
 
-- Wildlife scenes have **poor lighting**, occlusion, rain/fog, and cluttered backgrounds.
-- Different stakeholders need different outcomes (census, prevention, safety), but raw detections aren’t actionable.
-- A “trigger” (sensor/camera) is not the same as a **high-confidence event** (who/what/when/where with evidence).
+- Wildlife scenes have **low light**, occlusion, rain/fog, and cluttered backgrounds.
+- A raw detection is not actionable unless it is paired with **confidence**, **evidence**, and **context**.
+- Decision-making is local: the system must work near the camera/sensor with minimal internet.
 
-### WinGuard’s goal (in one line)
+### What WinGuard is trying to solve
 
-Convert sensor triggers + camera frames into **high-confidence, logged wildlife events** (with species + confidence + evidence) so response and reporting becomes fast, reliable, and scalable.
+WinGuard’s goal is to turn sensor triggers + camera frames into **high-confidence wildlife events** that are immediately usable:
+
+- **Human vs animal** (reduce panic + false alarms)
+- **Species classification** when an animal is detected (bear vs elephant matters)
+- **Confidence-aware output** (low confidence → `unknown`, avoid misleading labels)
+- **Event logging** (image + metadata) so incidents can be audited and analyzed
+
+If you want the long-form, story-style version with deeper context and requirements, see [docs/PROBLEM_STATEMENT.md](docs/PROBLEM_STATEMENT.md).
 
 ---
 
