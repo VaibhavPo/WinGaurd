@@ -12,6 +12,7 @@
 
 ## 📖 Table of Contents
 - [Why WinGuard?](#-why-winguard)
+- [Problem Statement](#-problem-statement)
 - [Key Features](#-key-features)
 - [System Architecture](#-system-architecture)
 - [Tech Stack](#-tech-stack)
@@ -41,6 +42,30 @@ WinGuard is built to generate reliable, auditable events:
 - *Which species?*
 - *(planned)* *Is it the same animal as earlier (Global ID + dedup)?*
 - *(planned)* *Is it entering a high-risk zone (alert escalation)?*
+
+---
+
+## 🧩 Problem Statement
+
+Human–Wildlife Conflict (HWC) is rising across corridors, farms, and forest boundaries, but most current monitoring setups still fail at the exact point where people need them: **making a reliable, real-time decision from noisy signals**.
+
+### What people are facing today
+
+- **Too many false alarms:** Motion/PIR-triggered systems and basic CCTV analytics alert on wind, shadows, pets, or passing vehicles.
+- **Low-confidence identification:** Even when something is detected, many systems can’t reliably answer *human vs animal* and *which species*.
+- **Slow response loops:** By the time a human verifies the feed, the animal is gone — or damage is already done.
+- **No audit trail:** Events often aren’t stored with consistent metadata, making it hard to analyze patterns, justify interventions, or improve models.
+- **Edge constraints:** Remote deployments have limited power/connectivity, so always-on streaming is impractical.
+
+### Why this is hard
+
+- Wildlife scenes have **poor lighting**, occlusion, rain/fog, and cluttered backgrounds.
+- Different stakeholders need different outcomes (census, prevention, safety), but raw detections aren’t actionable.
+- A “trigger” (sensor/camera) is not the same as a **high-confidence event** (who/what/when/where with evidence).
+
+### WinGuard’s goal (in one line)
+
+Convert sensor triggers + camera frames into **high-confidence, logged wildlife events** (with species + confidence + evidence) so response and reporting becomes fast, reliable, and scalable.
 
 ---
 
