@@ -13,9 +13,9 @@
 ## 📖 Table of Contents
 - [Why WinGuard?](#-why-winguard)
 - [Problem Statement](#-problem-statement)
+- [Data Flow Diagram (DFD)](#-data-flow-diagram-dfd)
 - [Key Features](#-key-features)
 - [System Architecture](#-system-architecture)
-- [Data Flow Diagram (DFD)](#-data-flow-diagram-dfd)
 - [Tech Stack](#-tech-stack)
 - [Current Status](#-current-status)
 - [Repo Structure](#-repo-structure)
@@ -94,6 +94,50 @@ If you want the long-form, story-style version with deeper context and requireme
 
 ---
 
+## 🔁 Data Flow Diagram (DFD)
+
+This DFD is the “big picture” of WinGuard — how we go from a **forest-edge motion trigger** to a **high-confidence, logged event** that can later drive alerts and analytics.
+
+![WinGuard Data Flow Diagram](dfd.png)
+
+### Flow explanation (aligned to the diagram)
+
+1. **Physical motion near boundary**
+    - A human or animal moves near the forest edge/corridor.
+
+2. **Edge sensing layer (IoT)**
+    - **PIR sensor** detects motion (low power, always on).
+    - **Camera module** activates only after the trigger and captures a frame (RGB today; thermal planned).
+
+3. **ESP32 (edge controller)**
+    - Reads PIR GPIO trigger.
+    - Controls camera power/capture.
+    - Attaches metadata (timestamp, camera ID).
+    - Sends **image + metadata** to the backend.
+
+4. **Network / communication**
+    - Transports data over Wi‑Fi/Internet.
+    - The objective is reliability of delivery; inference remains on the backend (prototype).
+
+5. **AI backend (FastAPI + Python)**
+    - **API ingress**: receives raw image bytes (`POST /detect`).
+    - **Preprocessing**: resize/normalize/denoise for stable inference.
+    - **Object detection (YOLOv8)**: decide `human` vs `animal` (or `none`) with confidence filtering.
+    - **Species classification (PyTorch)**: if animal detected, crop + classify; low confidence → `unknown`.
+    - **Business rules engine**: thresholds + event filtering for reliable outputs.
+
+6. **Event storage & audit log**
+    - Stores evidence (image path) + metadata + predictions in SQLite (prototype).
+    - This converts a one-time trigger into an **auditable record**.
+
+7. **Decision support + alerts (planned)**
+    - Tracking, de-duplication, and zone logic convert logs into actionable decisions.
+    - Alerts (SMS/WhatsApp/siren/dashboard) trigger for high-confidence, high-risk events.
+
+**Summary path:** Motion → Sensor → ESP32 → Camera → Backend AI → Database → Decision → Alert.
+
+---
+
 ## ✨ Key Features
 
 | Feature | Description | Status |
@@ -114,29 +158,6 @@ If you want the long-form, story-style version with deeper context and requireme
 The system follows a modular architecture separating Edge Processing, AI Analysis, and Cloud Storage.
 
 ![System Architecture](https://github.com/VaibhavPo/WinGaurd/blob/609dfe9b09bf5b14a5a576d450aa4ce3934cfa7c/flow%20(2).png?raw=true)
-
----
-
-## 🧭 Data Flow Diagram (DFD)
-
-![WinGuard Data Flow Diagram](docs/assets/dfd.svg)
-
-### How the project works (end-to-end)
-
-WinGuard is designed as a **decision support pipeline** that converts a noisy “motion trigger” into a **high-confidence, logged wildlife event**.
-
-1. **Motion happens near boundary** → PIR sensor triggers.
-2. **Camera captures a frame** (RGB / thermal planned) with timestamp + camera id.
-3. **ESP32 packages and forwards data** (frame bytes + metadata). *No AI inference on ESP32.*
-4. **Network transports the payload** (Wi‑Fi/Internet) to the backend.
-5. **FastAPI receives the image** via `POST /detect`.
-6. **Preprocessing** normalizes input for stable inference.
-7. **Object detection (YOLOv8)** decides: `human` vs `animal` (with confidence filtering).
-8. If `animal`, **species classification** runs on the cropped animal region.
-9. **Business rules** enforce thresholds (low confidence → `unknown`, invalid events discarded).
-10. **Event logging** stores image + metadata + predictions into the database for audits/analytics.
-
-**Planned next layer:** tracking + de-duplication + zone logic → alert escalation (SMS/WhatsApp/siren).
 
 ---
 
