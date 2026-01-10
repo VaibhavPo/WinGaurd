@@ -15,6 +15,7 @@
 - [Problem Statement](#-problem-statement)
 - [Key Features](#-key-features)
 - [System Architecture](#-system-architecture)
+- [Data Flow Diagram (DFD)](#-data-flow-diagram-dfd)
 - [Tech Stack](#-tech-stack)
 - [Current Status](#-current-status)
 - [Repo Structure](#-repo-structure)
@@ -113,6 +114,29 @@ If you want the long-form, story-style version with deeper context and requireme
 The system follows a modular architecture separating Edge Processing, AI Analysis, and Cloud Storage.
 
 ![System Architecture](https://github.com/VaibhavPo/WinGaurd/blob/609dfe9b09bf5b14a5a576d450aa4ce3934cfa7c/flow%20(2).png?raw=true)
+
+---
+
+## 🧭 Data Flow Diagram (DFD)
+
+![WinGuard Data Flow Diagram](docs/assets/dfd.svg)
+
+### How the project works (end-to-end)
+
+WinGuard is designed as a **decision support pipeline** that converts a noisy “motion trigger” into a **high-confidence, logged wildlife event**.
+
+1. **Motion happens near boundary** → PIR sensor triggers.
+2. **Camera captures a frame** (RGB / thermal planned) with timestamp + camera id.
+3. **ESP32 packages and forwards data** (frame bytes + metadata). *No AI inference on ESP32.*
+4. **Network transports the payload** (Wi‑Fi/Internet) to the backend.
+5. **FastAPI receives the image** via `POST /detect`.
+6. **Preprocessing** normalizes input for stable inference.
+7. **Object detection (YOLOv8)** decides: `human` vs `animal` (with confidence filtering).
+8. If `animal`, **species classification** runs on the cropped animal region.
+9. **Business rules** enforce thresholds (low confidence → `unknown`, invalid events discarded).
+10. **Event logging** stores image + metadata + predictions into the database for audits/analytics.
+
+**Planned next layer:** tracking + de-duplication + zone logic → alert escalation (SMS/WhatsApp/siren).
 
 ---
 
